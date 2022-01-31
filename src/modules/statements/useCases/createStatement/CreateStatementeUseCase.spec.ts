@@ -1,6 +1,7 @@
 import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository"
 import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/InMemoryUsersRepository"
 import { CreateStatementUseCase } from "./CreateStatementUseCase"
+import { CreateStatementError } from "./CreateStatementError"
 
 let usersRepositoryInMemory: InMemoryUsersRepository
 let statementeRepositoryInMemory: InMemoryStatementsRepository
@@ -37,5 +38,18 @@ describe('Create statement', () => {
     const statementCreated = await createStatementUseCase.execute(statement)
 
     expect(statementCreated).toHaveProperty('id')
+  })
+
+  it('should not be able to make a statement of a unexistent user id', () => {
+    expect(async () => {
+      const statement = {
+        user_id: 'test',
+        type: OperationType.DEPOSIT,
+        amount: 200,
+        description: 'description test'
+      }
+
+      await createStatementUseCase.execute(statement)
+    }).rejects.toBeInstanceOf(CreateStatementError.UserNotFound)
   })
 })
