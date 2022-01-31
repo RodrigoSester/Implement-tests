@@ -52,4 +52,34 @@ describe('Create statement', () => {
       await createStatementUseCase.execute(statement)
     }).rejects.toBeInstanceOf(CreateStatementError.UserNotFound)
   })
+
+  it('should not be able to make a withdraw of a insufficient funds', () => {
+    expect(async () => {
+      const user = {
+        name: 'test',
+        email: 'test@test.com',
+        password: 'test'
+      }
+  
+      const createdUser = await usersRepositoryInMemory.create(user)
+  
+      const depositStatement = {
+        user_id: createdUser.id!,
+        type: OperationType.DEPOSIT,
+        amount: 100,
+        description: 'description test'
+      }
+      
+      await createStatementUseCase.execute(depositStatement)
+
+      const withdrawStatement = {
+        user_id: createdUser.id!,
+        type: OperationType.WITHDRAW,
+        amount: 200,
+        description: 'description test'
+      }
+
+      await createStatementUseCase.execute(withdrawStatement)
+    }).rejects.toBeInstanceOf(CreateStatementError.InsufficientFunds)
+  })
 })
