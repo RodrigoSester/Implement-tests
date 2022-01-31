@@ -8,7 +8,6 @@ import { GetBalanceError } from "./GetBalanceError"
 let usersRepositoryInMemory: InMemoryUsersRepository
 let statementRepositoryInMemory: InMemoryStatementsRepository
 let getBalanceUseCase: GetBalanceUseCase
-let createStatementUseCase: CreateStatementUseCase
 
 enum OperationType {
   DEPOSIT = 'deposit',
@@ -20,7 +19,6 @@ describe('Get balance', () => {
     usersRepositoryInMemory = new InMemoryUsersRepository()
     statementRepositoryInMemory = new InMemoryStatementsRepository()
     getBalanceUseCase = new GetBalanceUseCase(statementRepositoryInMemory, usersRepositoryInMemory)
-    createStatementUseCase = new CreateStatementUseCase(usersRepositoryInMemory, statementRepositoryInMemory)
   })
   
   it('should be able to get balance of a user', async () => {
@@ -39,7 +37,7 @@ describe('Get balance', () => {
       description: 'description test'
     }
 
-    await createStatementUseCase.execute(depositStatement)
+    await statementRepositoryInMemory.create(depositStatement)
 
     const getBalance = await getBalanceUseCase.execute({user_id: createdUser.id!})
 
