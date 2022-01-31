@@ -1,6 +1,7 @@
 import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository"
 import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/InMemoryUsersRepository"
 import { GetStatementOperationUseCase } from "./GetStatementOperationUseCase"
+import { GetStatementOperationError } from "./GetStatementOperationError"
 
 let usersRepositoryInMemory: InMemoryUsersRepository
 let statementRepositoryInMemory: InMemoryStatementsRepository
@@ -40,6 +41,12 @@ describe('Get statement operation', () => {
         type: 'deposit',
         amount: 100,
         description: 'description test'
+    })
+
+    it('should not be able to get a statement operation of a unexistent user id', () => {
+      expect(async () => {
+        await getStatementOperationUseCase.execute({user_id: '', statement_id: ''})
+      }).rejects.toBeInstanceOf(GetStatementOperationError.UserNotFound)
     })
   })
 })
