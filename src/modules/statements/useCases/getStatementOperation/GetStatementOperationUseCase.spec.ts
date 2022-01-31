@@ -42,11 +42,25 @@ describe('Get statement operation', () => {
         amount: 100,
         description: 'description test'
     })
+  })
 
-    it('should not be able to get a statement operation of a unexistent user id', () => {
-      expect(async () => {
-        await getStatementOperationUseCase.execute({user_id: '', statement_id: ''})
-      }).rejects.toBeInstanceOf(GetStatementOperationError.UserNotFound)
-    })
+  it('should not be able to get a statement operation of a unexistent user id', () => {
+    expect(async () => {
+      await getStatementOperationUseCase.execute({user_id: '', statement_id: ''})
+    }).rejects.toBeInstanceOf(GetStatementOperationError.UserNotFound)
+  })
+
+  it('should not be able to get a statement operation of a unexistent statement id', () => {
+    expect(async () => {
+      const user = {
+        name: 'test',
+        email: 'test@test.com',
+        password: 'test'
+      }
+  
+      const createdUser = await usersRepositoryInMemory.create(user)
+
+      await getStatementOperationUseCase.execute({user_id: createdUser.id!, statement_id: ''})
+    }).rejects.toBeInstanceOf(GetStatementOperationError.StatementNotFound)
   })
 })
