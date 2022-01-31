@@ -1,0 +1,41 @@
+import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository"
+import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/InMemoryUsersRepository"
+import { CreateStatementUseCase } from "./CreateStatementUseCase"
+
+let usersRepositoryInMemory: InMemoryUsersRepository
+let statementeRepositoryInMemory: InMemoryStatementsRepository
+let createStatementUseCase: CreateStatementUseCase
+
+enum OperationType {
+  DEPOSIT = 'deposit',
+  WITHDRAW = 'withdraw'
+}
+
+describe('Create statement', () => {
+  beforeEach(() => {
+    usersRepositoryInMemory = new InMemoryUsersRepository()
+    statementeRepositoryInMemory = new InMemoryStatementsRepository()
+    createStatementUseCase = new CreateStatementUseCase(usersRepositoryInMemory, statementeRepositoryInMemory)
+  })
+
+  it('should be able to create a new statement', async () => {
+    const user = {
+      name: 'test',
+      email: 'test@test.com',
+      password: 'test'
+    }
+
+    const createdUser = await usersRepositoryInMemory.create(user)
+
+    const statement = {
+      user_id: createdUser.id!,
+      type: OperationType.DEPOSIT,
+      amount: 200,
+      description: 'description test'
+    }
+
+    const statementCreated = await createStatementUseCase.execute(statement)
+
+    expect(statementCreated).toHaveProperty('id')
+  })
+})
