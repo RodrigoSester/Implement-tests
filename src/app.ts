@@ -8,7 +8,7 @@ import './database';
 import './shared/container';
 import { router } from './routes';
 import { AppError } from './shared/errors/AppError';
-import 'reflect-metadata'
+
 
 const app = express();
 
