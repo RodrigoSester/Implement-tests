@@ -4,5 +4,16 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: [
     "**/*.spec.ts"
-  ]
+  ],
+  coverageProvider: 'v8',
+  collectCoverage: true,
+  collectCoverageFrom: [
+    '<rootDir>/src/modules/**/useCases/**/*.ts'
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: [
+    'text-summary',
+    'lcov'
+  ],
+  
 };

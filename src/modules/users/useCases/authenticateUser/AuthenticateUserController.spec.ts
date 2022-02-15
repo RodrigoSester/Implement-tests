@@ -3,6 +3,7 @@ import request from 'supertest';
 
 import { app } from '../../../../app';
 import createConnection from '../../../../database';
+import { hash } from 'bcryptjs';
 
 let connection: Connection;
 
@@ -14,16 +15,26 @@ describe('Authenticate User Controller', () => {
 
   afterAll(async () => {
     await connection.dropDatabase();
+    await connection.close()
   })
 
   it('should be able create session for a user', async () => {
-    const email = 'test@test.com'
-    const password = 'test'
+    const password = await hash("61443", 8)
 
-    const response = await request(app).post('api/v1/sessions').send({
-      email,
+    await request(app)
+      .post('/api/v1/users')
+      .send({
+        name: 'test',
+        email: 'test@test.com',
+        password: '61443'
+      })
+
+    const response = await request(app).post('/api/v1/sessions').send({
+      email: 'test@test.com',
       password
     })
+
+    console.log(response.error)
 
     expect(response.status).toBe(200)
   })

@@ -1,6 +1,6 @@
 {
   "username": "postgres",
-  "password": "Bucateno%6@7",
+  "password": "YOUR_PASSWORD",
 
   "name": "default",
   "type": "postgres",
@@ -8,7 +8,7 @@
   "port": 5432,
   "database": "fin_api",
   "entities": [
-    "src/modules/entities/**/*.ts"
+    "src/modules/**/entities/**/*.ts"
   ],
   "migrations": [
     "src/database/migrations/*.ts"

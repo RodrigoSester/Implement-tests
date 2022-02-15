@@ -7,13 +7,14 @@ import createConnection from '../../../../database'
 let connection: Connection
 
 describe('Create user controller', () => {
-  beforeAll( async () => {
+  beforeAll(async () => {
     connection = await createConnection()
     await connection.runMigrations()
   })
 
-  afterAll( async () => {
+  afterAll(async () => {
     await connection.dropDatabase()
+    await connection.close()
   })
 
   it('it should be able to create a new user', async () => {
@@ -37,7 +38,7 @@ describe('Create user controller', () => {
       password: 'test'
     })
 
-    const response = await request(app).post('api/v1/users').send({
+    const response = await request(app).post('/api/v1/users').send({
       name: 'test',
       email,
       password: 'test'

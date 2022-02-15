@@ -9,7 +9,7 @@ import { StatementsRepository } from '../../modules/statements/repositories/Stat
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
   UsersRepository
-);
+)
 
 container.registerSingleton<IStatementsRepository>(
   'StatementsRepository',
