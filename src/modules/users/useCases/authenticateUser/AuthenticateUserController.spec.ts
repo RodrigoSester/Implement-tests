@@ -19,8 +19,6 @@ describe('Authenticate User Controller', () => {
   })
 
   it('should be able create session for a user', async () => {
-    const password = await hash("61443", 8)
-
     await request(app)
       .post('/api/v1/users')
       .send({
@@ -31,7 +29,7 @@ describe('Authenticate User Controller', () => {
 
     const response = await request(app).post('/api/v1/sessions').send({
       email: 'test@test.com',
-      password
+      password: '61443'
     })
 
     console.log(response.error)

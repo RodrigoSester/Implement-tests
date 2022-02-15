@@ -8,6 +8,7 @@ import './database';
 import './shared/container';
 import { router } from './routes';
 import { AppError } from './shared/errors/AppError';
+import './config/auth';
 
 createConnection()
 const app = express();
