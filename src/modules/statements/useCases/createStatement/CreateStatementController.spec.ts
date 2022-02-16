@@ -134,7 +134,7 @@ describe('Create statement', () => {
     expect(response.body.message).toBe('User not found')
   })
 
-  it.only('should not be able to make a withdraw with a unexistent user', async () => {
+  it('should not be able to make a withdraw with a unexistent user', async () => {
     const response = await request(app)
       .post('/api/v1/statements/withdraw')
       .send({
@@ -147,5 +147,35 @@ describe('Create statement', () => {
 
     expect(response.status).toBe(404)
     expect(response.body.message).toBe('User not found')
+  })
+
+  it('should not be able to make a withdraw more than amount', async () => {
+    const { body } = await request(app).post('/api/v1/sessions').send({
+      email: 'test@test.com',
+      password: '61443'
+    })
+
+    await request(app)
+      .post('/api/v1/statements/deposit')
+      .send({
+        amount: 87,
+        description: 'Harriett Moss'
+      })
+      .set({
+        Authorization: `Bearer ${body.token}`
+      })
+    
+    const response = await request(app)
+      .post('/api/v1/statements/withdraw')
+      .send({
+        amount: 29084388,
+        description: 'Nannie Watkins'
+      })
+      .set({
+        Authorization: `Bearer ${body.token}`
+      })
+
+    expect(response.status).toBe(400)
+    expect(response.body.message).toBe('Insufficient funds')
   })
 })
