@@ -79,4 +79,21 @@ describe('Create statement', () => {
     expect(response.body.type).toEqual('withdraw')
     expect(response.body.description).toEqual('Contas')
   })
+
+  it('should be able to get balance of user', async () => {
+    const { body } = await request(app).post('/api/v1/sessions').send({
+      email: 'test@test.com',
+      password: '61443'
+    })
+
+    const response = await request(app).get('/api/v1/statements/balance').set({
+      Authorization: `Bearer ${body.token}`
+    })
+
+    console.log(response.body)
+
+    expect(response.status).toBe(200)
+    expect(response.body.balance).toBe(100)
+    expect(response.body).toHaveProperty('statement')
+  })
 })
