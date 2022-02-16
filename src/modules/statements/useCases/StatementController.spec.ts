@@ -1,7 +1,7 @@
 import { Connection } from 'typeorm';
 import request from 'supertest';
-import { app } from '../../../../app';
-import createConnection from '../../../../database'
+import { app } from '../../../app';
+import createConnection from '../../../database'
 
 let connection: Connection;
 
@@ -210,8 +210,6 @@ describe('Create statement', () => {
     const response = await request(app).get('/api/v1/statements/d2d6a932-ad44-4696-9317-af7d51ea6c4e').set({
       Authorization: `Bearer ${body.token}`
     })
-
-    console.log(response.error)
 
     expect(response.status).toBe(404)
     expect(response.body.message).toBe('Statement not found')
