@@ -42,6 +42,14 @@ describe('Show user profile', () => {
     
     expect(response.body.name).toEqual('Maria Figueroa')
     expect(response.body.email).toEqual('kedaw@upoibnim.ua')
-    
+  })
+
+  it('should not be able to show a profile of a unexistent user', async () => {
+    const response = await request(app).get('/api/v1/profile').set({
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZDY1ZTRmMjktNmM2Yi00NGJkLWE5YzItMTAyZDMxNWZhZmI2IiwibmFtZSI6Ik1hcmlhIEZpZ3Vlcm9hIiwiZW1haWwiOiJrZWRhd0B1cG9pYm5pbS51YSIsInBhc3N3b3JkIjoiJDJhJDA4JEtXOWV2UDViZldyOWhvdDZiNDdCenVBbTJ1V1NqZ1UxRHBzQkhvUk8ybDRDd3NMem9vV3NtIiwiY3JlYXRlZF9hdCI6IjIwMjItMDItMTZUMTQ6NDA6MDcuNjE4WiIsInVwZGF0ZWRfYXQiOiIyMDIyLTAyLTE2VDE0OjQwOjA3LjYxOFoifSwiaWF0IjoxNjQ1MDIyNDA3LCJleHAiOjE2NDUxMDg4MDcsInN1YiI6ImQ2NWU0ZjI5LTZjNmItNDRiZC1hOWMyLTEwMmQzMTVmYWZiNiJ9.7fuSANap0i2W8Oit1FNSNJU7Sk9F07V3eQx0heaRhLI`
+    })
+
+    expect(response.status).toBe(404)
+    expect(response.body.message).toBe('User not found')
   })
 })
