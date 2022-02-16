@@ -90,10 +90,32 @@ describe('Create statement', () => {
       Authorization: `Bearer ${body.token}`
     })
 
-    console.log(response.body)
-
     expect(response.status).toBe(200)
     expect(response.body.balance).toBe(100)
     expect(response.body).toHaveProperty('statement')
+  })
+
+  it('should be able to list a statement by id', async () => {
+    const { body } = await request(app).post('/api/v1/sessions').send({
+      email: 'test@test.com',
+      password: '61443'
+    })
+
+    const balance = await request(app).get('/api/v1/statements/balance').set({
+      Authorization: `Bearer ${body.token}`
+    })
+
+    const response = await request(app).get(`/api/v1/statements/${balance.body.statement[0].id}`).set({
+      Authorization: `Bearer ${body.token}`
+    })
+    expect(response.status).toBe(200)
+
+    expect(response.body).toHaveProperty('id')
+    expect(response.body).toHaveProperty('user_id')
+    expect(response.body).toHaveProperty('description')
+    expect(response.body).toHaveProperty('amount')
+    expect(response.body).toHaveProperty('type')
+    expect(response.body).toHaveProperty('created_at')
+    expect(response.body).toHaveProperty('updated_at')
   })
 })
