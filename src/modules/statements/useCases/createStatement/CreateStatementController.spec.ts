@@ -179,7 +179,7 @@ describe('Create statement', () => {
     expect(response.body.message).toBe('Insufficient funds')
   })
 
-   it('should not be able to get balance of an unexistent user', async () => {
+  it('should not be able to get balance of an unexistent user', async () => {
     const response = await request(app)
       .get('/api/v1/statements/balance')
       .set({
@@ -188,9 +188,9 @@ describe('Create statement', () => {
 
     expect(response.status).toBe(404)
     expect(response.body.message).toBe('User not found')
-   })
+  })
 
-   it('should not be able to get a statement by unexistent user', async () => {
+  it('should not be able to get a statement by unexistent user', async () => {
     const response = await request(app)
       .get(`/api/v1/statements/d2d6a932-ad44-4696-9317-af7d51ea6c4e`)
       .set({
@@ -199,5 +199,21 @@ describe('Create statement', () => {
 
     expect(response.status).toBe(404)
     expect(response.body.message).toBe('User not found')
-   })
+  })
+
+  it('should not be able to get statement by unexistent id', async () => {
+    const { body } = await request(app).post('/api/v1/sessions').send({
+      email: 'test@test.com',
+      password: '61443'
+    })
+
+    const response = await request(app).get('/api/v1/statements/d2d6a932-ad44-4696-9317-af7d51ea6c4e').set({
+      Authorization: `Bearer ${body.token}`
+    })
+
+    console.log(response.error)
+
+    expect(response.status).toBe(404)
+    expect(response.body.message).toBe('Statement not found')
+  })
 })
