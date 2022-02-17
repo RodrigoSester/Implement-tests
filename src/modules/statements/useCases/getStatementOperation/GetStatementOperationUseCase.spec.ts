@@ -9,7 +9,8 @@ let getStatementOperationUseCase: GetStatementOperationUseCase
 
 enum OperationType {
   DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw'
+  WITHDRAW = 'withdraw',
+  TRANSFER = 'transfer'
 }
 
 describe('Get statement operation', () => {

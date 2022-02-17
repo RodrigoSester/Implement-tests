@@ -11,7 +11,8 @@ let getBalanceUseCase: GetBalanceUseCase
 
 enum OperationType {
   DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw'
+  WITHDRAW = 'withdraw',
+  TRANSFER = 'transfer'
 }
 
 describe('Get balance', () => {

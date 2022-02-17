@@ -48,4 +48,10 @@ export class InMemoryStatementsRepository implements IStatementsRepository {
 
     return { balance }
   }
+
+  async transfer({amount, description, user_id, type}: ICreateStatementDTO): Promise<Statement> {
+    const statement = this.statements.find(operation => operation.user_id === user_id)
+
+    return statement!
+  }
 }

@@ -61,4 +61,27 @@ export class StatementsRepository implements IStatementsRepository {
 
     return { balance }
   }
+
+  async transfer({ amount, type, description, user_id }: ICreateStatementDTO): Promise<Statement> {
+    const statement = await this.repository.find({
+      user_id
+    })
+
+    const balance = this.repository.create({
+      user_id,
+      amount,
+      description,
+      type
+    })
+    
+    const statementOperation = statement.reduce((acc, operation) => {
+      return acc - operation.amount
+    }, 0)
+
+    console.log(statementOperation)
+
+    const operation = await this.repository.save(balance)
+
+    return operation
+  }
 }
