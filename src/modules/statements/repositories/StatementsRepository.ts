@@ -13,12 +13,7 @@ export class StatementsRepository implements IStatementsRepository {
     this.repository = getRepository(Statement);
   }
 
-  async create({
-    user_id,
-    amount,
-    description,
-    type
-  }: ICreateStatementDTO): Promise<Statement> {
+  async create({ user_id, amount, description, type }: ICreateStatementDTO): Promise<Statement> {
     const statement = this.repository.create({
       user_id,
       amount,
@@ -35,11 +30,7 @@ export class StatementsRepository implements IStatementsRepository {
     });
   }
 
-  async getUserBalance({ user_id, with_statement = false }: IGetBalanceDTO):
-    Promise<
-      { balance: number } | { balance: number, statement: Statement[] }
-    >
-  {
+  async getUserBalance({ user_id, with_statement = false }: IGetBalanceDTO): Promise< { balance: number } | { balance: number, statement: Statement[] } > {
     const statement = await this.repository.find({
       where: { user_id }
     });
@@ -62,16 +53,17 @@ export class StatementsRepository implements IStatementsRepository {
     return { balance }
   }
 
-  async transfer({ amount, type, description, user_id }: ICreateStatementDTO): Promise<Statement> {
-    const statement = await this.repository.find({
-      user_id
-    })
+  async transfer(sender_id: string, { amount, type, description, user_id }: ICreateStatementDTO): Promise<Statement> {
+    const statement = await this.repository.find({ user_id })
 
-    const balance = this.repository.create({
+    await this.create({user_id, amount, description, type})
+
+    const operation = this.repository.create({
       user_id,
       amount,
       description,
-      type
+      type,
+      sender_id
     })
     
     const statementOperation = statement.reduce((acc, operation) => {
@@ -80,8 +72,6 @@ export class StatementsRepository implements IStatementsRepository {
 
     console.log(statementOperation)
 
-    const operation = await this.repository.save(balance)
-
-    return operation
+    return await this.repository.save(operation)
   }
 }

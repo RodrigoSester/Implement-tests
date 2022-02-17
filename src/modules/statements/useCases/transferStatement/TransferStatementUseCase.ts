@@ -1,9 +1,8 @@
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
 import { inject, injectable } from "tsyringe";
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
-import { TransferStatementError } from "./TransferStatementError";
-import { type } from "os";
 import { ICreateStatementDTO } from "../createStatement/ICreateStatementDTO";
+import { CreateStatementError } from "../createStatement/CreateStatementError";
 
 @injectable()
 class TransferStatementUseCase {
@@ -17,13 +16,17 @@ class TransferStatementUseCase {
   async execute(id: string, { user_id, description, amount, type }: ICreateStatementDTO) {
     const user = await this.usersRepository.findById(id)
 
-    if (!user) throw new TransferStatementError()
+    if (!user) throw new CreateStatementError.UserNotFound
 
     const userTransfer = await this.usersRepository.findById(user_id)
 
-    if(!userTransfer) throw new TransferStatementError()
+    if(!userTransfer) throw new CreateStatementError.UserNotFound
 
-    const transferStatementOperation = await this.statementRepository.transfer({ user_id, amount, description, type })
+    const { balance } = await this.statementRepository.getUserBalance({ user_id: user.id as string })
+
+    if(balance < amount) throw new CreateStatementError.InsufficientFunds
+
+    const transferStatementOperation = await this.statementRepository.transfer(user.id!, { user_id, amount, description, type })
 
     return transferStatementOperation
   }

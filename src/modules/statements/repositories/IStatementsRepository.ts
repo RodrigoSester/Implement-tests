@@ -9,5 +9,5 @@ export interface IStatementsRepository {
   getUserBalance: (data: IGetBalanceDTO) => Promise<
     { balance: number } | { balance: number, statement: Statement[] }
   >;
-  transfer: (data: ICreateStatementDTO) => Promise<Statement>
+  transfer: (id: string, data: ICreateStatementDTO) => Promise<Statement>
 }

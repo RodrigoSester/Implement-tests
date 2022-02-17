@@ -29,6 +29,13 @@ export class Statement {
   user: User;
 
   @Column()
+  sender_id: string
+
+  @ManyToOne(() => User, user => user.statement)
+  @JoinColumn({ name: 'sender_id' })
+  tranfer: User
+
+  @Column()
   description: string;
 
   @Column('decimal', { precision: 5, scale: 2 })
