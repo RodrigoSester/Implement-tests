@@ -16,15 +16,15 @@ class TransferStatementUseCase {
   async execute(id: string, { user_id, description, amount, type }: ICreateStatementDTO) {
     const user = await this.usersRepository.findById(id)
 
-    if (!user) throw new CreateStatementError.UserNotFound
+    if (!user) throw new CreateStatementError.UserNotFound()
 
     const userTransfer = await this.usersRepository.findById(user_id)
 
-    if(!userTransfer) throw new CreateStatementError.UserNotFound
+    if(!userTransfer) throw new CreateStatementError.UserNotFound()
 
     const { balance } = await this.statementRepository.getUserBalance({ user_id: user.id as string })
 
-    if(balance < amount) throw new CreateStatementError.InsufficientFunds
+    if(balance < amount) throw new CreateStatementError.InsufficientFunds()
 
     const transferStatementOperation = await this.statementRepository.transfer(user.id!, { user_id, amount, description, type })
 
