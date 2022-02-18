@@ -35,11 +35,11 @@ export class StatementsRepository implements IStatementsRepository {
       where: { user_id }
     });
 
-    const balance = statement.reduce((acc, operation) => {
+    const balance = statement.reduce((total, operation) => {
       if (operation.type === 'deposit') {
-        return acc + operation.amount;
+        return total + Number(operation.amount)
       } else {
-        return acc - operation.amount;
+        return total - Number(operation.amount)
       }
     }, 0)
 
@@ -54,9 +54,9 @@ export class StatementsRepository implements IStatementsRepository {
   }
 
   async transfer(sender_id: string, { amount, type, description, user_id }: ICreateStatementDTO): Promise<Statement> {
-    const statement = await this.repository.find({ user_id })
+    const receiver = await this.repository.find({ user_id })
 
-    await this.create({user_id, amount, description, type})
+    const sender = await this.repository.find({ sender_id })
 
     const operation = this.repository.create({
       user_id,
@@ -65,13 +65,24 @@ export class StatementsRepository implements IStatementsRepository {
       type,
       sender_id
     })
-    
-    const statementOperation = statement.reduce((acc, operation) => {
-      return acc - operation.amount
+
+    sender.reduce((total, operation) => {
+      return total - Number(operation.amount)
     }, 0)
 
-    console.log(statementOperation)
+    const transfered = this.repository.create({ amount, description, type, id: sender_id, user_id })
+    
+    receiver.reduce((total, operation) => {
+      return total + Number(operation.amount)
+    }, 0)
 
-    return await this.repository.save(operation)
+    await this.create({ user_id, amount, description, type })
+    await this.create({ user_id: sender_id, amount, description, type })
+
+    await this.repository.save(transfered)
+
+    const balance = await this.repository.save(operation)
+
+    return balance
   }
 }
