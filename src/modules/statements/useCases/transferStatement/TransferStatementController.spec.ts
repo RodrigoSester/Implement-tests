@@ -71,4 +71,26 @@ describe('Transfer', () => {
     expect(response.body.description).toEqual('Beatrice Torres')
     expect(response.body.type).toEqual('transfer')
   })
+
+  it('should not be able to make a transfer with unexistent user', async () => {
+    const user = await request(app)
+      .post('/api/v1/users')
+      .send({
+        name: 'Jane Allison',
+        email: 'egnek@zocas.im',
+        password: '4740'
+      })
+
+    const response = await request(app).post(`/api/v1/statements/transfer/${user.body.id}`)
+    .send({
+      amount: 100,
+      description: 'Beatrice Torres'
+    })
+    .set({
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNTcwYzdhODAtYjc2Ny00ZWE5LWEzYWEtZTc1OGU1MmQ4YWQzIiwibmFtZSI6InRlc3QiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJwYXNzd29yZCI6IiQyYSQwOCRlZVI2UldORmJMV3VoNGFHVzdURkNlZW9ZU1VmZmZON25ORXgyeFBnaUdRZmRrYXdlOTFhdSIsImNyZWF0ZWRfYXQiOiIyMDIyLTAyLTE4VDE1OjQyOjMyLjEzNFoiLCJ1cGRhdGVkX2F0IjoiMjAyMi0wMi0xOFQxNTo0MjozMi4xMzRaIn0sImlhdCI6MTY0NTE5ODk1NCwiZXhwIjoxNjQ1Mjg1MzU0LCJzdWIiOiI1NzBjN2E4MC1iNzY3LTRlYTktYTNhYS1lNzU4ZTUyZDhhZDMifQ.BKSBFy9kWHEFIcnDpK5154lmCq-cVq4ieM19Up-Vo5I`
+    })
+
+    expect(response.status).toBe(404)
+    expect(response.body.message).toEqual('User not found')
+  })
 })
