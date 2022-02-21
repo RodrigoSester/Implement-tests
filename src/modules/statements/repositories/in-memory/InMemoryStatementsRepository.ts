@@ -49,7 +49,13 @@ export class InMemoryStatementsRepository implements IStatementsRepository {
     return { balance }
   }
 
-  //async transfer(id: string, data: ICreateStatementDTO): Promise<Statement> {
-  //  
-  //}
+  async transfer(id: string, { user_id, type, description, amount }: ICreateStatementDTO): Promise<Statement> {
+    const statement = new Statement();
+
+    Object.assign(statement, { user_id, type, description, amount });
+
+    this.statements.push(statement);
+
+    return statement;
+  }
 }

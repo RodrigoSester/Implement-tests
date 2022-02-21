@@ -1,4 +1,5 @@
 import { getRepository, Repository } from "typeorm";
+import { isStringLiteral } from "typescript";
 
 import { Statement } from "../entities/Statement";
 import { ICreateStatementDTO } from "../useCases/createStatement/ICreateStatementDTO";
@@ -31,22 +32,10 @@ export class StatementsRepository implements IStatementsRepository {
   }
 
   async getUserBalance({ user_id, with_statement = false }: IGetBalanceDTO): Promise< { balance: number } | { balance: number, statement: Statement[] } > {
-    const statement = await this.repository.find({
-      where: { user_id }
-    });
-
-    if(statement[0].sender_id != null) {
-      statement.reduce((total, operation) => {
-        if (operation.type === 'deposit' || operation.type === 'transfer') {
-          return total + Number(operation.amount)
-        } else {
-          return total - Number(operation.amount)
-        }
-      }, 0)
-    }
+    const statement = await this.repository.find({ where: { user_id } })
 
     const balance = statement.reduce((total, operation) => {
-      if (operation.type === 'deposit') {
+      if (operation.sender_id != null && operation.type === 'transfer' || operation.type === 'deposit') {
         return total + Number(operation.amount)
       } else {
         return total - Number(operation.amount)
@@ -80,14 +69,11 @@ export class StatementsRepository implements IStatementsRepository {
       return total - Number(operation.amount)
     }, 0)
 
-    const transfered = this.repository.create({ amount, description, type, id: sender_id, user_id })
+    const transfered = this.repository.create({ amount, description, type, user_id: sender_id })
     
     receiver.reduce((total, operation) => {
       return total + Number(operation.amount)
     }, 0)
-
-    await this.create({ user_id, amount, description, type })
-    await this.create({ user_id: sender_id, amount, description, type })
 
     await this.repository.save(transfered)
 
